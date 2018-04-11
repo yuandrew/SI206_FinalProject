@@ -2,7 +2,7 @@ import requests
 import json
 import secrets
 
-
+# nyt_popular_key = secrets.nyt_popular_api_key
 nyt_books_key = secrets.nyt_books_api_key
 twitter_key = secrets.twitter_api_key
 twitter_secret = secrets.twitter_api_secret
@@ -56,9 +56,18 @@ def make_request_using_cache(baseurl, params):
         return CACHE_DICTION[unique_ident]
 
 def nyt_book_search(date):
-    nyt_search_url = 'http://api.nytimes.com/svc/books/v3/lists/overview.json?'
+    search_url = 'http://api.nytimes.com/svc/books/v3/lists/overview.json?'
 
     params = {'published_date': date, 'api-key': nyt_books_key}
-    test_search = make_request_using_cache(nyt_search_url, params)
+    test_search = make_request_using_cache(search_url, params)
     print(test_search)
-nyt_book_search('2013-05-22')
+
+def nyt_mostpopular_search(section, time_period):
+    search_url = 'http://api.nytimes.com/svc/mostpopular/v2/mostviewed/' + section + '/' + str(time_period) + '.json?'
+
+    params = {'api-key': nyt_books_key}
+    test_search = make_request_using_cache(search_url, params)
+    print(test_search)
+#main
+# nyt_book_search('2013-05-22')
+nyt_mostpopular_search('Arts', 1)
