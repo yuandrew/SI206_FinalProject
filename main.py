@@ -1,6 +1,7 @@
 import requests
 import json
 import secrets
+import sqlite3
 
 # nyt_popular_key = secrets.nyt_popular_api_key
 nyt_books_key = secrets.nyt_books_api_key
@@ -10,6 +11,42 @@ twitter_access_token = secrets.twitter_access_token
 twitter_access_secret = secrets.twitter_access_secret
 google_places_key = secrets.google_places_key
 
+
+#Database
+DBNAME = 'data.db'
+conn = sqlite3.connect(DBNAME)
+cur = conn.cursor()
+
+statement = '''
+    CREATE TABLE Books (
+        'age_group' INTEGER NOT NULL,
+        'author' TEXT NOT NULL,
+        'created_date' TEXT NOT NULL,
+        'description' TEXT NOT NULL,
+        'primary_isbn13' TEXT NOT NULL,
+        'title' TEXT PRIMARY KEY
+    )
+'''
+
+cur.execute(statement)
+conn.commit()
+
+statement = '''
+    CREATE TABLE Most_popular (
+        'Title' TEXT PRIMARY KEY,
+        'url' TEXT NOT NULL,
+        'published_date' TEXT NOT NULL,
+        'abstract' TEXT NOT NULL,
+    )
+'''
+
+cur.execute(statement)
+conn.commit()
+
+
+
+
+#cache
 CACHE_FNAME = 'cache.json'
 try:
     cache_file = open(CACHE_FNAME, 'r')
@@ -60,7 +97,9 @@ def nyt_book_search(date):
 
     params = {'published_date': date, 'api-key': nyt_books_key}
     test_search = make_request_using_cache(search_url, params)
-    print(test_search)
+    for result in test_search:
+        print(result)
+        print('\n\n\n\n\n\n')
 
 def nyt_mostpopular_search(section, time_period):
     search_url = 'http://api.nytimes.com/svc/mostpopular/v2/mostviewed/' + section + '/' + str(time_period) + '.json?'
@@ -69,5 +108,5 @@ def nyt_mostpopular_search(section, time_period):
     test_search = make_request_using_cache(search_url, params)
     print(test_search)
 #main
-# nyt_book_search('2013-05-22')
-nyt_mostpopular_search('Arts', 1)
+nyt_book_search('2013-05-22')
+# nyt_mostpopular_search('Arts', 1)
