@@ -1,1 +1,5 @@
 secrets.py
+__*__
+*.json
+.DS_Store
+out*
