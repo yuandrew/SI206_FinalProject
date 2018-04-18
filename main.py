@@ -10,22 +10,35 @@ twitter_secret = secrets.twitter_api_secret
 twitter_access_token = secrets.twitter_access_token
 twitter_access_secret = secrets.twitter_access_secret
 google_places_key = secrets.google_places_key
-
+google_key = secrets.google_key
 
 #Database
 DBNAME = 'data.db'
 conn = sqlite3.connect(DBNAME)
 cur = conn.cursor()
 
+statement = 'DROP TABLE IF EXISTS \'Books\';'
+cur.execute(statement)
+conn.commit()
+statement = 'DROP TABLE IF EXISTS \'Most_popular\';'
+cur.execute(statement)
+conn.commit()
+statement = 'DROP TABLE IF EXISTS \'Yelp\';'
+cur.execute(statement)
+conn.commit()
+statement = 'DROP TABLE IF EXISTS \'GMap\';'
+cur.execute(statement)
+conn.commit()
+
 statement = '''
     CREATE TABLE Books (
-        'age_group' INTEGER NOT NULL,
+        'age_group' INTEGER,
         'author' TEXT NOT NULL,
         'created_date' TEXT NOT NULL,
         'description' TEXT NOT NULL,
         'primary_isbn13' TEXT NOT NULL,
         'title' TEXT PRIMARY KEY
-    )
+    );
 '''
 
 cur.execute(statement)
@@ -36,14 +49,20 @@ statement = '''
         'Title' TEXT PRIMARY KEY,
         'url' TEXT NOT NULL,
         'published_date' TEXT NOT NULL,
-        'abstract' TEXT NOT NULL,
-    )
+        'abstract' TEXT NOT NULL
+    );
 '''
 
 cur.execute(statement)
 conn.commit()
 
+statement = '''CREATE TABLE Yelp ('placeholder' TEXT PRIMARY KEY)'''
+cur.execute(statement)
+conn.commit()
 
+statement = '''CREATE TABLE GMap ('placeholder' TEXT PRIMARY KEY)'''
+cur.execute(statement)
+conn.commit()
 
 
 #cache
@@ -84,6 +103,7 @@ def make_request_using_cache(baseurl, params):
         print("Making a request for new data...")
         # Make the request and cache the new data
         resp = requests.get(baseurl, params)
+        # print(resp) #use if getting api error
         CACHE_DICTION[unique_ident] = json.loads(resp.text)
         dumped_json_cache = json.dumps(CACHE_DICTION)
         # dumped_json_cache = json.dumps(CACHE_DICTION, sort_keys=True, indent=4, separators=(',', ': '))
@@ -97,16 +117,45 @@ def nyt_book_search(date):
 
     params = {'published_date': date, 'api-key': nyt_books_key}
     test_search = make_request_using_cache(search_url, params)
-    for result in test_search:
-        print(result)
-        print('\n\n\n\n\n\n')
-
+    for result in test_search['results']['lists'][1]['books']:
+        statement = '''INSERT INTO 'Books' VALUES (?, ?, ?, ?, ?, ?)'''
+        insertion = (result['age_group'], result['author'], result['created_date'], result['description'], result['primary_isbn13'], result['title'])
+        cur.execute(statement, insertion)
+        conn.commit()
 def nyt_mostpopular_search(section, time_period):
     search_url = 'http://api.nytimes.com/svc/mostpopular/v2/mostviewed/' + section + '/' + str(time_period) + '.json?'
 
     params = {'api-key': nyt_books_key}
     test_search = make_request_using_cache(search_url, params)
     print(test_search)
+def map_nearby_search():
+    search_url = 'https://maps.googleapis.com/maps/api/place/nearbysearch/json?'
+    #search nearby places on google maps, and link yelp ratings to result
+    #maybe create a map on flask to display on website
+
+def yelp_search():
+    #search yelp for restaurants in a city, and use gmaps to find distance
+    #maybe create a map on flask to display on website
+    pass
+
+def convert_place_latlong(place):
+    #place autocomplete | Google Places API
+    search_url = 'https://maps.googleapis.com/maps/api/place/autocomplete/json?'
+    params = {'input': place, 'key': google_key, 'types': 'address'}
+    autocomplete_search = make_request_using_cache(search_url, params)
+    # print(autocomplete_search['predictions'])
+    for i in range(len(autocomplete_search['predictions'])):
+        print(str(1 + i) + ': ' + autocomplete_search['predictions'][i]['description'])
+        # print('\n\n\n\n')
+    search_index = input('Please select closest address: ')
+    place_id = autocomplete_search['predictions'][int(search_index) - 1]['place_id']
+
+    geocode_url = 'https://maps.googleapis.com/maps/api/geocode/json?'
+    params = {'place_id': place_id, 'key': google_key}
+    geo_search = make_request_using_cache(geocode_url, params)
+    lat_lon = geo_search['results'][0]['geometry']['location']
+    # print(geo_search['results'][0]['geometry']['location'])
 #main
-nyt_book_search('2013-05-22')
+# nyt_book_search('2013-05-22')
 # nyt_mostpopular_search('Arts', 1)
+convert_place_latlong('ann arbor, MI')
