@@ -1,18 +1,13 @@
-<form align="center" action="/bssearch" method='POST'>
-  Where would you like to search for? <input type="text" name="location"/> <br/>
-  <select name="search_type">
-    <option value="restaurantsearch">Restaurant</option>
-    <option value="bestsellers">New York Times Best Sellers</option>
-    <option value="mostpopular">New York Times Most Popular</option>
-    <option value="nearbysearch">Nearby Search</option>
-  </select>
-  <br><br>
-  <input type="submit">
+<form align="center" action="/mostpopular/confirm" method='POST'>
+    Search Category<select name="category">
+    {% for row in list %}
+        <option value={{ row }}>{{ row }}</option>
+    {% endfor %}
+    </select>
+    Time-period (in days)<select name="time">
+        <option value=1> 1 </option>
+        <option value=3> 3 </option>
+        <option value=7> 7 </option>
+    <br><br>
+    <input type="submit">
 </form>
-
-
-
-
-
-<!-- button that goes at bottom of all search pages to start new search -->
-<button onclick="location.href = 'http://localhost:5000/';" id="myButton">New Search</button>

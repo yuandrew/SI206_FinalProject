@@ -37,14 +37,13 @@ def program_start():
 
     statement = '''
         CREATE TABLE Books (
-            'age_group' INTEGER,
+            'title' TEXT PRIMARY KEY,
             'author' TEXT NOT NULL,
             'created_date' TEXT NOT NULL,
-            'description' TEXT NOT NULL,
             'primary_isbn13' TEXT NOT NULL,
-            'title' TEXT PRIMARY KEY
-        );
-    '''
+            'age_group' INTEGER,
+            'description' TEXT NOT NULL
+        );'''
 
     cur.execute(statement)
     conn.commit()
@@ -102,12 +101,12 @@ cur = conn.cursor()
 #
 # statement = '''
 #     CREATE TABLE Books (
-#         'age_group' INTEGER,
+#         'title' TEXT PRIMARY KEY,
 #         'author' TEXT NOT NULL,
 #         'created_date' TEXT NOT NULL,
-#         'description' TEXT NOT NULL,
 #         'primary_isbn13' TEXT NOT NULL,
-#         'title' TEXT PRIMARY KEY
+#         'age_group' INTEGER,
+#         'description' TEXT NOT NULL
 #     );
 # '''
 #
@@ -232,18 +231,22 @@ def nyt_book_search(date):
     params = {'published_date': date, 'api-key': nyt_books_key}
     test_search = make_request_using_cache(search_url, params)
     for result in test_search['results']['lists'][1]['books']:
-        statement = '''INSERT INTO 'Books' VALUES (?, ?, ?, ?, ?, ?)'''
-        insertion = (result['age_group'], result['author'], result['created_date'], result['description'], result['primary_isbn13'], result['title'])
-        cur.execute(statement, insertion)
+        statement = '''INSERT OR IGNORE INTO 'Books' VALUES (?, ?, ?, ?, ?, ?)'''
+        insert = (result['title'], result['author'], result['created_date'], result['primary_isbn13'], result['age_group'], result['description'])
+        cur.execute(statement, insert)
         conn.commit()
-def nyt_mostpopular_search(section, time_period):
+def nyt_mostpopular_search(category, time):
     conn = sqlite3.connect(DBNAME)
     cur = conn.cursor()
-    search_url = 'http://api.nytimes.com/svc/mostpopular/v2/mostviewed/' + section + '/' + str(time_period) + '.json?'
+    search_url = 'http://api.nytimes.com/svc/mostpopular/v2/mostviewed/' + category + '/' + str(time) + '.json?'
 
     params = {'api-key': nyt_books_key}
     test_search = make_request_using_cache(search_url, params)
-    # print(test_search)
+    for row in test_search['results']:
+        statement = 'INSERT OR IGNORE INTO Most_popular VALUES (?, ?, ?, ?)'
+        insert = (row['title'], row['url'], row['published_date'], row['abstract'])
+        cur.execute(statement, insert)
+        conn.commit()
 def map_nearby_search(place):
     conn = sqlite3.connect(DBNAME)
     cur = conn.cursor()
@@ -298,6 +301,8 @@ def yelp_single_search(name, place):
     cur.execute(statement, insert)
     conn.commit()
 
+
+
 def get_place_id(place):
     conn = sqlite3.connect(DBNAME)
     cur = conn.cursor()
@@ -320,7 +325,6 @@ def get_place_id(place):
     #     potential_places.append(item)
     # return potential_places
     return autocomplete_search['predictions'][0]
-
 def convert_place_latlong(place):
     place_id = place['place_id']
 
@@ -332,7 +336,6 @@ def convert_place_latlong(place):
 
     # print(lat_lon)
     return lat_lon
-
 def calculate_distance(coords_1, coords_2):
 
 
@@ -346,8 +349,8 @@ def calculate_distance(coords_1, coords_2):
 
 #main
 # nyt_book_search('2013-05-22')
-# nyt_mostpopular_search('Arts', 1)
+nyt_mostpopular_search('Arts', 1)
 # convert_place_latlong('ann arbor, MI')
 # map_nearby_search('troy, MI')
 # yelp_search('troy, MI')
-yelp_single_search('Sushi Ya', '4327 Whisper Way Dr.')
+# yelp_single_search('Sushi Ya', '4327 Whisper Way Dr.')

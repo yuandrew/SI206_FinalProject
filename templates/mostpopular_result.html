@@ -16,26 +16,21 @@
     </style>
 </head>
 <body>
-    <h1>Best Sellers List Result</h1>
+    <h1>Most Popular Search Results</h1>
     <!-- button that goes at bottom of all search pages to start new search -->
     <button onclick="location.href = 'http://localhost:5000/';" id="myButton">New Search</button>
     <!-- Results table with sorting functionality -->
     <table>
         <tr>
             <td>Title</td>
-            <td>Author</td>
-            <td>Created Date</td>
-            <td>Primary ISBN13</td>
-            <td>Age Group</td>
-            <td>Description</td>
+            <td>Published Date</td>
+            <td>Abstract</td>
+
     {% for row in result %}
         <tr>
-            <td>{{ row.title }}</td>
-            <td>{{ row.author }}</td>
-            <td>{{ row.created_date }}</td>
-            <td>{{ row.primary_isbn13 }}</td>
-            <td>{{ row.age }}</td>
-            <td>{{ row.description }}</td>
+            <td><a href={{ row.url }}>{{ row.title }}</a></td>
+            <td>{{ row.published_date }}</td>
+            <td>{{ row.abstract }}</td>
         </tr>
     {% endfor %}
     </table>
