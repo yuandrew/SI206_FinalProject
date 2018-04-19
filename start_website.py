@@ -3,12 +3,14 @@ import main
 import sqlite3
 
 app = Flask(__name__)
-most_popular_list = ['Arts', 'Automobiles', 'Blogs', 'Books', 'Business Day', 'Education',
-    'Fashion & Style', 'Food', 'Health', 'Job Market', 'Magazine', 'membercenter', 'Movies',
-    'Multimedia', 'NYT Now', 'Obituaries', 'Open', 'Opinion', 'Public Editor', 'Real Estate',
-    'Science', 'Sports', 'Style', 'Sunday Review', 'T Magazine', 'Technology', 'The Upshot',
-    'Theater', 'Times Insider', 'Today’s Paper', 'Travel', 'U.S.', 'World', 'Your Money',
+most_popular_list = ['Arts', 'Automobiles', 'Blogs', 'Books', 'Business Day',
+    'Education', 'Fashion & Style', 'Food', 'Health', 'Job Market', 'Magazine',
+    'membercenter', 'Movies', 'Multimedia', 'NYT Now', 'Obituaries', 'Open',
+    'Opinion', 'Public Editor', 'Real Estate', 'Science', 'Sports', 'Style',
+    'Sunday Review', 'T Magazine', 'Technology', 'The Upshot', 'Theater',
+    'Times Insider', 'Today’s Paper', 'Travel', 'U.S.', 'World', 'Your Money',
     'all-sections']
+
 class Nearby:
     def __init__(self, init_tuple):
         self.name = init_tuple[0]
@@ -43,7 +45,6 @@ def home():
 
 @app.route('/select', methods=['POST'])
 def signup():
-    # location = request.form['location']
     search_type = request.form['search_type']
     return redirect('/' + search_type)
 
@@ -68,9 +69,13 @@ def restaurant_search_nearby():
         if search == '':
             search = row[0]
     statement = '''
-        SELECT GMap.name, GMap.address, distance, price, rating, review_count, url, phone
-        FROM Gmap JOIN Yelp ON Yelp.name=GMap.name'''
-    cur.execute(statement)
+        SELECT ?, ?, ?, ?, ?, ?, ?, ?
+        FROM Gmap
+        JOIN Yelp
+        ON Yelp.name=GMap.name'''
+    insert = ('GMap.name', 'GMap.address', 'distance', 'price', 'rating',
+                'review_count', 'url', 'phone')
+    cur.execute(statement, insert)
     search_result = []
     for row in cur:
         search_result.append(Nearby(row))
@@ -92,8 +97,10 @@ def bs_search():
 def best_sellers_result():
     conn = sqlite3.connect(main.DBNAME)
     cur = conn.cursor()
-    statement = '''SELECT title, author, created_date, primary_isbn13, age_group, description FROM Books'''
-    cur.execute(statement)
+    statement = 'SELECT ?, ?, ?, ?, ?, ? FROM Books'
+    insert = ('title', 'author', 'created_date', 'primary_isbn13',
+                'age_group', 'description')
+    cur.execute(statement, insert)
     search_result = []
     for row in cur:
         search_result.append(BestSeller(row))
@@ -116,7 +123,7 @@ def mp_search():
 def most_popular_results():
     conn = sqlite3.connect(main.DBNAME)
     cur = conn.cursor()
-    statement = '''SELECT title, url, published_date, abstract FROM Most_popular'''
+    statement = 'SELECT title, url, published_date, abstract FROM Most_popular'
     cur.execute(statement)
     search_result = []
     for row in cur:
