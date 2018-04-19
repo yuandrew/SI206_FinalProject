@@ -1,0 +1,16 @@
+<h1 align="center">What would you like to do?</h1>
+
+<form align="center" action="/action_page.php">
+  Where would you like to search for? <input type="text" name="location"/> <br/>
+  <select name="search_type">
+    <option value="restaurant">Restaurant</option>
+    <option value="nytbs">New York Times Best Sellers</option>
+    <option value="nytmp">New York Times Most Popular</option>
+    <option value="nearby">Nearby Search</option>
+  </select>
+  <br><br>
+  <input type="submit">
+</form>
+
+<!-- button that goes at bottom of all search pages to start new search -->
+<button onclick="location.href = 'http://localhost:5000/';" id="myButton">New Search</button>
