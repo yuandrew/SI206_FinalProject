@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+table {
+    border-collapse: collapse;
+    width: 100%;
+}
+td, th {
+    border: 1px solid #dddddd;
+    text-align: left;
+}
+tr:nth-child(even) {
+    background-color: #dddddd;
+}
+</style>
+</head>
+
+<h1>Restaurants in {{city}}</h1>
+
+<!-- Results table with sorting functionality -->
+<table>
+    <tr>
+        <td>Restaurant Name</td>
+        <td>Rating</td>
+        <td>Review Count</td>
+        <td>Price</td>
+        <td>Address</td>
+        <td>Phone</td>
+{% for restaurant in search_result %}
+    <tr>
+        <td><a href={{YELP ADDRESS GOES HERE}}>{{NAME GOES HERE}}</a></td>
+        <td>{{RATING GOES HERE}}
+
+
+{% endfor %}

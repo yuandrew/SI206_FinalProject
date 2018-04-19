@@ -1,8 +1,10 @@
+<form align="center" action="/restaurantsearch/confirm" method='POST'>
+  Where would you like to search for? <input type="text" name="location"/> <br/>
+  <select name="search_type">
+      <option value='nearby'>Search Restaurants Closest to Me</option>
+      <option value='city'>Search All Restaurants in a City</option>
 
-
-
-
-
-
-<!-- button that goes at bottom of all search pages to start new search -->
-<button onclick="location.href = 'http://localhost:5000/';" id="myButton">New Search</button>
+  </select>
+  <br><br>
+  <input type="submit">
+</form>
