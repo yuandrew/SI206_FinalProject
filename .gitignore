@@ -1,4 +1,5 @@
 secrets.py
+flask1
 *.db
 __*__
 *.json
