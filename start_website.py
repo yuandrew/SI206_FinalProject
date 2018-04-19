@@ -33,18 +33,11 @@ def restaurant_search():
 
 @app.route('/restaurantsearch/confirm', methods=['POST'])
 def restaurant_search_confirm():
-    search_type = request.form['search_type']
     location = request.form['location']
+    main.map_nearby_search(location)
+    return redirect('/restaurantsearch/results')
 
-    if search_type == 'nearby':
-        # potential_places = main.map_nearby_search(location)
-        main.map_nearby_search(location)
-        pub_location = location
-        return redirect('/restaurantsearch/nearby')
-    main.yelp_search(location)
-    return redirect('/restaurantsearch/city')
-
-@app.route('/restaurantsearch/nearby')
+@app.route('/restaurantsearch/results')
 def restaurant_search_nearby():
     conn = sqlite3.connect(main.DBNAME)
     cur = conn.cursor()
@@ -54,17 +47,14 @@ def restaurant_search_nearby():
     for row in cur:
         if search == '':
             search = row[0]
-    statement = 'SELECT GMap.name, GMap.address, distance, price, rating, review_count, url, phone FROM Gmap JOIN Yelp ON Yelp.name=GMap.name'# WHERE GMap.search_address=\'' + pub_location + '\''
+    statement = '''
+        SELECT GMap.name, GMap.address, distance, price, rating, review_count, url, phone
+        FROM Gmap JOIN Yelp ON Yelp.name=GMap.name'''
     cur.execute(statement)
     search_result = []
     for row in cur:
         search_result.append(Nearby(row))
     return render_template('restaurant_nearby.html', result=search_result, place=search)
-
-@app.route('/restaurantsearch/city')
-def restaurant_search_city():
-    statement = ''' '''
-    return render_template('restaurant_city.html')
 
 
 

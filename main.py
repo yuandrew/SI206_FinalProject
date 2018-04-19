@@ -219,6 +219,11 @@ def make_request_using_cache_header(baseurl, params, header):
         fw.close() # Close the open file
         return CACHE_DICTION[unique_ident]
 
+
+
+
+
+
 def nyt_book_search(date):
     conn = sqlite3.connect(DBNAME)
     cur = conn.cursor()
@@ -292,26 +297,6 @@ def yelp_single_search(name, place):
     statement = '''INSERT OR IGNORE INTO Yelp VALUES (?, ?, ?, ?, ?, ?, ?);'''
     cur.execute(statement, insert)
     conn.commit()
-def yelp_search(place):
-    conn = sqlite3.connect(DBNAME)
-    cur = conn.cursor()
-    #search yelp for restaurants in a city,
-
-    search_url = 'https://api.yelp.com/v3/businesses/search?'
-    params = {'term': 'restaurant', 'location': place, 'sort_by': 'rating'}
-    header = {'Authorization': 'Bearer %s' % yelp_key,}
-    yelp_result = make_request_using_cache_header(search_url, params, header)
-    # make_request_using_cache_header('https://api.yelp.com/oauth2/' + yelp_key, {}, header)
-    # yelp_result = make_request_using_cache(search_url, params)
-    for row in yelp_result['businesses']:
-        address = ''
-        for item in row['location']['display_address']:
-            address += ' ' + item
-        insert = (row['name'], row['price'], address, row['rating'], row['review_count'], row['url'], row['phone'])
-        statement = '''INSERT OR IGNORE INTO Yelp VALUES (?, ?, ?, ?, ?, ?, ?);'''
-        cur.execute(statement, insert)
-        conn.commit()
-    #maybe create a map on flask to display on website
 
 def get_place_id(place):
     conn = sqlite3.connect(DBNAME)
