@@ -1,8 +1,10 @@
 from flask import Flask, render_template, request, redirect
 import main
 import sqlite3
-import plotly.plotly as py
+import plotly as py
 import plotly.graph_objs as go
+from plotly.offline import plot
+from markupsafe import Markup
 
 app = Flask(__name__)
 most_popular_list = ['Arts', 'Automobiles', 'Blogs', 'Books', 'Business Day',
@@ -17,7 +19,8 @@ class Nearby:
     def __init__(self, init_tuple):
         self.name = init_tuple[0]
         self.address = init_tuple[1]
-        self.distance = format(init_tuple[2], '.2f')
+        # self.distance = format(init_tuple[2], '.2f')
+        self.distance = init_tuple[2]
         self.price = init_tuple[3]
         self.rating = init_tuple[4]
         self.review_count = init_tuple[5]
@@ -71,17 +74,32 @@ def restaurant_search_nearby():
         if search == '':
             search = row[0]
     statement = '''
-        SELECT ?, ?, ?, ?, ?, ?, ?, ?
+        SELECT GMap.name, GMap.address, distance, price, rating,
+                review_count, url, phone
         FROM Gmap
         JOIN Yelp
         ON Yelp.name=GMap.name'''
-    insert = ('GMap.name', 'GMap.address', 'distance', 'price', 'rating',
-                'review_count', 'url', 'phone')
-    cur.execute(statement, insert)
+
+    cur.execute(statement)
     search_result = []
     for row in cur:
         search_result.append(Nearby(row))
-    return render_template('restaurant_nearby.html', result=search_result, place=search)
+
+
+    trace0 = go.Bar(
+        x=[x.name for x in search_result],
+        y=[y.rating for y in search_result]
+    )
+    barLayout = go.Layout(title='Restaurant')
+
+
+
+
+
+    my_plot_div = plot([trace0], output_type='div')
+    #END OF ANSWER
+
+    return render_template('restaurant_nearby.html', result=search_result, place=search, div_placeholder=Markup(my_plot_div))
 
 
 
@@ -99,10 +117,10 @@ def bs_search():
 def best_sellers_result():
     conn = sqlite3.connect(main.DBNAME)
     cur = conn.cursor()
-    statement = 'SELECT ?, ?, ?, ?, ?, ? FROM Books'
-    insert = ('title', 'author', 'created_date', 'primary_isbn13',
-                'age_group', 'description')
-    cur.execute(statement, insert)
+    statement = '''SELECT title, author, created_date, primary_isbn13,
+                    age_group, description
+                FROM Books'''
+    cur.execute(statement)
     search_result = []
     for row in cur:
         search_result.append(BestSeller(row))

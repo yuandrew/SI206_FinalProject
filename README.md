@@ -9,7 +9,7 @@ Data sources used:
 &nbsp;&nbsp;&nbsp;&nbsp;[Google Places API Web Service](https://developers.google.com/places/web-service/search)  
 &nbsp;&nbsp;&nbsp;&nbsp;[Google Maps Geocoding API](https://developers.google.com/maps/documentation/geocoding/intro)  
 
-Keys needed:
+Keys needed:  
 &nbsp;&nbsp;&nbsp;&nbsp;Google API Key  
 &nbsp;&nbsp;&nbsp;&nbsp;New York Times API Key  
 &nbsp;&nbsp;&nbsp;&nbsp;Yelp Client ID and API Key  
@@ -17,8 +17,8 @@ Keys needed:
 See sample_secret.py for formatting and how to implement.
 
 
-INSERT PLOTLY INSTRUCTIONS
-INSERT REQUIREMENTS.TXT INSTRUCTIONS
+INSERT PLOTLY INSTRUCTIONS  
+INSERT REQUIREMENTS.TXT INSTRUCTIONS  
 
 
 Brief Overview: The most important functions in my code are in main.py, which contain all of the API call functions. Each function calls the API in its name. As for start_website.py, that is used for Flask to create the website based off of templates. There are classes used when SELECTing data from the database to insert into the webpages. There is also a large list of most_popular_items as a category bank for easy selection when calling the Most Popular command.

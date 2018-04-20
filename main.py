@@ -190,8 +190,8 @@ def nyt_book_search(date):
 def nyt_mostpopular_search(category, time):
     conn = sqlite3.connect(DBNAME)
     cur = conn.cursor()
-    search_url = 'http://api.nytimes.com/svc/mostpopular/v2/mostviewed/' +
-                    category + '/' + str(time) + '.json?'
+    search_url = 'http://api.nytimes.com/svc/mostpopular/v2/mostviewed/'
+    search_url += category + '/' + str(time) + '.json?'
 
     params = {'api-key': nyt_key}
     test_search = make_request_using_cache(search_url, params)
