@@ -3,23 +3,16 @@
 [Link to project specifications](https://docs.google.com/document/d/19vyyYe2d-VGWf_sN3y82lbJaitR4eN-LitTRz2COu1Q/edit)
 
 Data sources used:
-    [Yelp Fusion Business Search](https://www.yelp.com/developers/documentation/v3/business_search)
-
-    [New York Times Books API](https://developer.nytimes.com/books_api.json)
-
-    [New York Times Most Popular API](https://developer.nytimes.com/most_popular_api_v2.json)
-
-    [Google Places API Web Service](https://developers.google.com/places/web-service/search)
-
-    [Google Maps Geocoding API](https://developers.google.com/maps/documentation/geocoding/intro)
+    [Yelp Fusion Business Search](https://www.yelp.com/developers/documentation/v3/business_search)  
+    [New York Times Books API](https://developer.nytimes.com/books_api.json)  
+    [New York Times Most Popular API](https://developer.nytimes.com/most_popular_api_v2.json)  
+    [Google Places API Web Service](https://developers.google.com/places/web-service/search)  
+    [Google Maps Geocoding API](https://developers.google.com/maps/documentation/geocoding/intro)  
 
 Keys needed:
     Google API Key
-
     New York Times API Key
-
     Yelp Client ID and API Key
-
 
 See sample_secret.py for formatting and how to implement.
 
