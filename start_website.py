@@ -1,6 +1,8 @@
 from flask import Flask, render_template, request, redirect
 import main
 import sqlite3
+import plotly.plotly as py
+import plotly.graph_objs as go
 
 app = Flask(__name__)
 most_popular_list = ['Arts', 'Automobiles', 'Blogs', 'Books', 'Business Day',
